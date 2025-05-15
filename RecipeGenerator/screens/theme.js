@@ -1,3 +1,5 @@
+// Source A2 from Maximilian Schöll(12129652)
+
 const COLORS = {
     primary: '#566246',
     secondary: '#A4C2A5',
