@@ -15,8 +15,8 @@ export default function LoginScreen({ navigation }) {
       instructions:
         '1. Boil pasta.\n2. Cook ground beef with garlic and onion.\n3. Add tomato sauce.\n4. Mix with pasta and serve hot.',
     };
-
-    navigation.navigate('Details', { recipe: dummyRecipe });
+    navigation.replace('Main');
+    //navigation.navigate('Details', { recipe: dummyRecipe });
   };
   return (
     <View style={styles.container}>
