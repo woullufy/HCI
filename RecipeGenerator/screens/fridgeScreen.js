@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import IngredientsTab from './ingredientsTab';
 import OtherIngredientsTab from './otherIngredientsTab';
 import { COLORS, FONTS, SPACING, RADIUS } from './theme';
@@ -8,7 +8,8 @@ export default function FridgeScreen() {
   const [activeTab, setActiveTab] = useState('fridge');
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      
       {/* Tabs */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
@@ -17,7 +18,7 @@ export default function FridgeScreen() {
         >
           <Text style={styles.tabText}>Kühlschrank</Text>
         </TouchableOpacity>
-
+  
         <TouchableOpacity
           style={[styles.tab, activeTab === 'manual' && styles.activeTab]}
           onPress={() => setActiveTab('manual')}
@@ -25,12 +26,12 @@ export default function FridgeScreen() {
           <Text style={styles.tabText}>Andere Zutaten</Text>
         </TouchableOpacity>
       </View>
-
+  
       {/* Inhalt */}
       <View style={styles.content}>
         {activeTab === 'fridge' ? <IngredientsTab /> : <OtherIngredientsTab />}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -42,8 +43,9 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: COLORS.surface,
     paddingVertical: SPACING.sm,
+    marginTop: SPACING.lg,
+    backgroundColor: COLORS.background, // gleiche Farbe wie der ganze Screen
   },
   tab: {
     padding: SPACING.sm,

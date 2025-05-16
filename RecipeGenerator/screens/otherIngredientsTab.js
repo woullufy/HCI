@@ -25,7 +25,6 @@ export default function OtherIngredientsTab() {
     expiration: '',
     calories: 0,
   });
-  const [addModalVisible, setAddModalVisible] = useState(false);
 
   const handleDelete = (index) => {
     Alert.alert(
@@ -68,7 +67,7 @@ export default function OtherIngredientsTab() {
   
     setItems([...items, itemToAdd]);
     setNewItem({ name: '', amount: '', expiration: '', calories: 0 });
-    setAddModalVisible(false);
+    setIsAdding(false);
   };
 
   const renderItem = ({ item, index }) => (
@@ -93,23 +92,16 @@ export default function OtherIngredientsTab() {
     </View>
   );
 
-  const handleSave = () => {
-    const updatedItems = [...items];
-    updatedItems[editingIndex] = editingItem;
-    setItems(updatedItems);
-    setIsEditing(false);
-    setEditingItem(null);
-    setEditingIndex(null);
-  };
-
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.background }}>
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => setIsAdding(true)}
       >
-        <MaterialIcons name="add" size={28} color={COLORS.surface} />
+        <MaterialIcons name="add" size={28} color={COLORS.surface}  />
+        <Text style={styles.buttonText}>Zutat hinzufügen</Text>
       </TouchableOpacity>
+
       <FlatList
         data={items}
         keyExtractor={(item, index) => index.toString()}
@@ -256,11 +248,7 @@ export default function OtherIngredientsTab() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={() => {
-                    setItems([...items, newItem]);
-                    setIsAdding(false);
-                    setNewItem({ name: '', quantity: '', expiryDate: '', calories: '' });
-                  }}
+                  onPress={handleAddItem}
                 >
                   <Text style={styles.buttonText}>Hinzufügen</Text>
                 </TouchableOpacity>
@@ -316,15 +304,21 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginLeft: 6,
   },
   addButton: {
-    position: 'absolute',
-    top: SPACING.md,
-    right: SPACING.md,
+    flexDirection: 'row',        // nebeneinander anordnen
+    alignItems: 'center',        // vertikal zentrieren
     backgroundColor: COLORS.primary,
-    padding: SPACING.sm,
-    borderRadius: 50,
-    zIndex: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignSelf: 'flex-middle',     // verhindert, dass der Button die ganze Breite nimmt
+    gap: 6, 
+    paddingRight: 20,
   },
   input: {
     borderBottomWidth: 1,
