@@ -16,9 +16,9 @@ const Tab = createBottomTabNavigator();
 function MainTabs() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Fridge" component={FridgeScreen} />
-      <Tab.Screen name="Recipes" component={RecipeSuggestionsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Zutaten" component={FridgeScreen} />
+      <Tab.Screen name="Rezepte" component={RecipeSuggestionsScreen} />
+      <Tab.Screen name="Profil" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
