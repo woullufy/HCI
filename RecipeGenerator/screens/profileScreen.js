@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { ScrollView } from 'react-native';
-import { View, Text, Switch, StyleSheet } from 'react-native';
+import { View, Text, Switch, StyleSheet, Button, TouchableOpacity, ScrollView } from 'react-native';
 import { COLORS, FONTS, SPACING, RADIUS } from './theme';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileScreen = () => {
   const [isVegetarian, setisVegetarian] = useState(false);
@@ -14,7 +14,7 @@ const ProfileScreen = () => {
   const [user2, setuser2] = useState(false);
   const [user3, setuser3] = useState(false);
 
-
+const navigation = useNavigation();
   return (
   <ScrollView style={styles.container}>
     <View style={styles.container}>
@@ -23,7 +23,7 @@ const ProfileScreen = () => {
         <Text style={FONTS.heading}>Einstellungen</Text>
       </View>
       <View style={styles.divider} />
-      <Text style={FONTS.subheading}>Lebensmitteleinschränkungen</Text>
+      <Text style={FONTS.subheading}>Lebensmittelvorlieben</Text>
       <View style={styles.switchContainer}>
          <View style={styles.container}>
             <Text style={FONTS.subheading}>Vegetarisch</Text>
@@ -113,8 +113,17 @@ const ProfileScreen = () => {
           value={user3}
         />
       </View>
-  </View>
-    </ScrollView>
+        <TouchableOpacity
+          style={styles.addFriendButton}
+          onPress={() => navigation.navigate('Social')}
+        >
+          <View style={styles.addFriendButtonContent}>
+            <MaterialIcons name="add" size={22} color="white" style={{ marginRight: 8 }} />
+            <Text style={styles.addFriendButtonText}>Freund hinzufügen</Text>
+          </View>
+        </TouchableOpacity>
+    </View>
+  </ScrollView>
   );
 };
 
@@ -147,5 +156,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 0,
+  },
+  addFriendButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 24,
+  },
+
+  addFriendButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'left',
+  },
+
+  addFriendButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
