@@ -72,24 +72,32 @@ export default function OtherIngredientsTab() {
 
   const renderItem = ({ item, index }) => (
     <View style={styles.item}>
-      <View style={{ flex: 1 }}>
-        <Text style={FONTS.subheading}>{item.name}</Text>
-        <Text style={FONTS.body}>Menge: {item.amount}</Text>
-        <Text style={FONTS.body}>Ablaufdatum: {item.expiration}</Text>
-        <Text style={FONTS.body}>{item.calories} kcal/100g</Text>
-      </View>
-      <View style={styles.actions}>
-        <TouchableOpacity onPress={() => handleEdit(item, index)}>
-          <MaterialIcons name="edit" size={24} color={COLORS.primary} />
-        </TouchableOpacity>
-        <TouchableOpacity 
-          onPress={() => handleDelete(index)}
-          style={{ marginLeft: SPACING.md }}
-        >
-          <MaterialIcons name="delete" size={24} color={COLORS.error} />
-        </TouchableOpacity>
-      </View>
-    </View>
+  <View style={{ flex: 1 }}>
+    <Text style={FONTS.subheading}>{item.name}</Text>
+    
+    <Text style={FONTS.body}>
+      <Text style={{ fontWeight: 'bold' }}>Menge: </Text>{item.amount}
+    </Text>
+    
+    <Text style={FONTS.body}>
+      <Text style={{ fontWeight: 'bold' }}>Ablaufdatum: </Text>{item.expiration}
+    </Text>
+    
+    <Text style={FONTS.body}>{item.calories} kcal</Text>
+  </View>
+
+  <View style={styles.actions}>
+    <TouchableOpacity onPress={() => handleEdit(item, index)}>
+      <MaterialIcons name="edit" size={24} color={COLORS.primary} />
+    </TouchableOpacity>
+    <TouchableOpacity 
+      onPress={() => handleDelete(index)}
+      style={{ marginLeft: SPACING.md }}
+    >
+      <MaterialIcons name="delete" size={24} color={COLORS.error} />
+    </TouchableOpacity>
+  </View>
+</View>
   );
 
   return (
@@ -98,7 +106,7 @@ export default function OtherIngredientsTab() {
         style={styles.addButton}
         onPress={() => setIsAdding(true)}
       >
-        <MaterialIcons name="add" size={28} color={COLORS.surface}  />
+        <MaterialIcons name="add" size={28} color={'white'}  />
         <Text style={styles.buttonText}>Zutat hinzufügen</Text>
       </TouchableOpacity>
 
@@ -215,10 +223,8 @@ export default function OtherIngredientsTab() {
                 keyboardType="numeric"
                 value={newItem.expiration}
                 onChangeText={(text) => {
-                  // Nur Ziffern behalten
                   const digits = text.replace(/\D/g, '');
 
-                  // Formatieren zu TT/MM/JJJJ
                   let formatted = digits;
                   if (digits.length > 2) {
                     formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
@@ -269,6 +275,8 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
     marginBottom: SPACING.sm,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   actions: {
     flexDirection: 'row',
@@ -310,13 +318,13 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   addButton: {
-    flexDirection: 'row',        // nebeneinander anordnen
-    alignItems: 'center',        // vertikal zentrieren
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: COLORS.primary,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
-    alignSelf: 'flex-middle',     // verhindert, dass der Button die ganze Breite nimmt
+    alignSelf: 'flex-middle',
     gap: 6, 
     paddingRight: 20,
   },

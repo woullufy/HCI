@@ -1,13 +1,13 @@
 // Source A2 from Maximilian Schöll(12129652)
 
 const COLORS = {
-    primary: '#566246',
-    secondary: '#A4C2A5',
-    background: '#F1F2EB',
-    surface: '#D8DAD3',
+    primary: '#da8d00',
+    secondary: '#b38b00', //'#A4C2A5' 
+    background: '#fff9e5',
+    surface: '#fff1bf',
     textPrimary: '#212121',
     textSecondary: '#757575',
-    border: '#5E5D5C',
+    border: '#b38b00',
     error: '#F44336',
     placeholder: '#4A4A48',
   };

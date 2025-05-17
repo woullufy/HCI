@@ -37,7 +37,7 @@ function ProfileStackScreen() {
 function MainTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Rezepte"   // <-- Hier Rezepte als Start-Tab setzen
+      initialRouteName="Rezepte" 
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           if (route.name === 'Zutaten') {
