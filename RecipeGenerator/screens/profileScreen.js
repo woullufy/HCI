@@ -1,145 +1,187 @@
-import React, { useState } from 'react';
-import { View, Text, Switch, StyleSheet, Button, TouchableOpacity, ScrollView } from 'react-native';
-import { COLORS, FONTS, SPACING, RADIUS } from './theme';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState, useCallback } from 'react';
+import {View,Text,Switch,FlatList,StyleSheet,TouchableOpacity,Alert,} from 'react-native';
+import { COLORS, FONTS } from './theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
-const ProfileScreen = () => {
+export default function UserListScreen() {
+  const [users, setUsers] = useState([]);
   const [isVegetarian, setisVegetarian] = useState(false);
   const [isVegan, setisVegan] = useState(false);
   const [isLactosefree, setisLactosefree] = useState(false);
   const [isGlutenfree, setisGlutenfree] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [user1, setuser1] = useState(false);
-  const [user2, setuser2] = useState(false);
-  const [user3, setuser3] = useState(false);
+  const navigation = useNavigation();
 
-const navigation = useNavigation();
-  return (
-  <ScrollView style={styles.container}>
-    <View style={styles.container}>
-      <View style={styles.headingContainer}>
-        <MaterialIcons name="settings" size={22} color="black" style={{ marginRight: 4 }} />
-        <Text style={FONTS.heading}>Einstellungen</Text>
-      </View>
-      <View style={styles.divider} />
-      <Text style={FONTS.subheading}>Lebensmittelvorlieben</Text>
-      <View style={styles.switchContainer}>
-         <View style={styles.container}>
-            <Text style={FONTS.subheading}>Vegetarisch</Text>
-            <Text style={FONTS.caption}>Zeig mir nur vegetarische oder vegane Rezepte.</Text>
-         </View>
-        <Switch
-          trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
-          thumbColor={isVegetarian ? 'green' : '#f4f3f4'}
-          onValueChange={() => setisVegetarian(prev => !prev)}
-          value={isVegetarian}
-        />
-      </View>
-
-      <View style={styles.switchContainer}>
-         <View style={styles.container}>
-            <Text style={FONTS.subheading}>Vegan</Text>
-            <Text style={FONTS.caption}>Zeig mir nur vegane Rezepte.</Text>
-         </View>
-        <Switch
-          trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
-          thumbColor={isVegan ? 'green' : '#f4f3f4'}
-          onValueChange={() => setisVegan(prev => !prev)}
-          value={isVegan}
-        />
-      </View>
-
-      <View style={styles.switchContainer}>
-         <View style={styles.container}>
-            <Text style={FONTS.subheading}>Laktosefrei</Text>
-            <Text style={FONTS.caption}>Zeig mir nur laktosefreie Rezepte.</Text>
-         </View>
-        <Switch
-          trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
-          thumbColor={isLactosefree ? 'green' : '#f4f3f4'}
-          onValueChange={() => setisLactosefree(prev => !prev)}
-          value={isLactosefree}
-        />
-      </View>
-
-      <View style={styles.switchContainer}>
-         <View style={styles.container}>
-            <Text style={FONTS.subheading}>Glutenfrei</Text>
-            <Text style={FONTS.caption}>Zeig mir nur glutenfreie Rezepte.</Text>
-         </View>
-        <Switch
-          trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
-          thumbColor={isGlutenfree ? 'green' : '#f4f3f4'}
-          onValueChange={() => setisGlutenfree(prev => !prev)}
-          value={isGlutenfree}
-        />
-      </View>
-      <View style={styles.divider} />
-      <Text style={FONTS.subheading}>Freunde berücksichtigen:</Text>
-      <View style={styles.switchContainer}>
-         <View style={styles.container}>
-            <Text style={FONTS.subheading}>Robert Maier</Text>
-            <Text style={FONTS.caption}>Lebensmitteleinschränkungen von Robert miteinbeziehen</Text>
-         </View>
-        <Switch
-          trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
-          thumbColor={user1 ? 'green' : '#f4f3f4'}
-          onValueChange={() => setuser1(prev => !prev)}
-          value={user1}
-        />
-      </View>
-      <View style={styles.switchContainer}>
-         <View style={styles.container}>
-            <Text style={FONTS.subheading}>Lisa Fuchs</Text>
-            <Text style={FONTS.caption}>Lebensmitteleinschränkungen von Lisa miteinbeziehen</Text>
-         </View>
-        <Switch
-          trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
-          thumbColor={user2 ? 'green' : '#f4f3f4'}
-          onValueChange={() => setuser2(prev => !prev)}
-          value={user2}
-        />
-      </View>
-      <View style={styles.switchContainer}>
-         <View style={styles.container}>
-            <Text style={FONTS.subheading}>Sebastian Fuchs</Text>
-            <Text style={FONTS.caption}>Lebensmitteleinschränkungen von Sebastian miteinbeziehen</Text>
-         </View>
-        <Switch
-          trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
-          thumbColor={user3 ? 'green' : '#f4f3f4'}
-          onValueChange={() => setuser3(prev => !prev)}
-          value={user3}
-        />
-      </View>
-        <TouchableOpacity
-          style={styles.addFriendButton}
-          onPress={() => navigation.navigate('Social')}
-        >
-          <View style={styles.addFriendButtonContent}>
-            <MaterialIcons name="add" size={22} color="white" style={{ marginRight: 8 }} />
-            <Text style={styles.addFriendButtonText}>Freund hinzufügen</Text>
-          </View>
-        </TouchableOpacity>
-    </View>
-  </ScrollView>
+  useFocusEffect(
+    useCallback(() => {
+      const loadUsers = async () => {
+        try {
+          const data = await AsyncStorage.getItem('users');
+          if (data) {
+            setUsers(JSON.parse(data));
+          }
+        } catch (e) {
+          console.error('Ladefehler:', e);
+        }
+      };
+      loadUsers();
+    }, [])
   );
-};
 
-export default ProfileScreen;
+  const deleteUser = async (id) => {
+    Alert.alert(
+      'Benutzer löschen',
+      'Möchten Sie diesen Benutzer wirklich löschen?',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Löschen',
+          style: 'destructive',
+          onPress: async () => {
+            const updatedUsers = users.filter((user) => user.id !== id);
+            setUsers(updatedUsers);
+            await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const toggleSwitch = async (id) => {
+    const updated = users.map((user) =>
+      user.id === id ? { ...user, enabled: !user.enabled } : user
+    );
+    setUsers(updated);
+    await AsyncStorage.setItem('users', JSON.stringify(updated));
+  };
+
+  const renderPreferenceSwitch = (label, caption, value, setValue) => (
+    <View style={styles.switchContainer}>
+      <View style={styles.container}>
+        <Text style={FONTS.subheading}>{label}</Text>
+        <Text style={FONTS.caption}>{caption}</Text>
+      </View>
+      <Switch
+        trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
+        thumbColor={value ? 'green' : '#f4f3f4'}
+        onValueChange={() => setValue((prev) => !prev)}
+        value={value}
+      />
+    </View>
+  );
+
+  return (
+    <View style={{ flex: 1 }}>
+      <FlatList
+        data={users}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 80 }}
+        ListHeaderComponent={
+          <View style={{ padding: 16 }}>
+            <View style={styles.headingContainer}>
+              <MaterialIcons
+                name="settings"
+                size={22}
+                color="black"
+                style={{ marginRight: 4 }}
+              />
+              <Text style={FONTS.heading}>Einstellungen</Text>
+
+            </View>
+            <View style={styles.divider} />
+               <View style={styles.subContainer}>
+               <Text style={FONTS.heading}>Meine Lebensmittelvorlieben</Text>
+            </View>
+            {renderPreferenceSwitch(
+              'Vegetarisch',
+              'Zeig mir nur vegetarische oder vegane Rezepte.',
+              isVegetarian,
+              setisVegetarian
+            )}
+            {renderPreferenceSwitch(
+              'Vegan',
+              'Zeig mir nur vegane Rezepte.',
+              isVegan,
+              setisVegan
+            )}
+            {renderPreferenceSwitch(
+              'Laktosefrei',
+              'Zeig mir nur laktosefreie Rezepte.',
+              isLactosefree,
+              setisLactosefree
+            )}
+            {renderPreferenceSwitch(
+              'Glutenfrei',
+              'Zeig mir nur glutenfreie Rezepte.',
+              isGlutenfree,
+              setisGlutenfree
+            )}
+
+            <View style={styles.subContainer}>
+              <Text style={FONTS.heading}>Freunde berücksichtigen</Text>
+            </View>
+          </View>
+        }
+        ListFooterComponent={
+          <View style={{ padding: 0 }}>
+            <TouchableOpacity
+              style={styles.addFriendButton}
+              onPress={() => navigation.navigate('Social')}
+            >
+              <View style={styles.addFriendButtonContent}>
+                <MaterialIcons name="add" size={22} color="white" style={{ marginRight: 8 }}/>
+                <Text style={styles.addFriendButtonText}>Freund hinzufügen</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        }
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <View>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.email}>{item.email}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+               <Switch
+                  value={item.enabled}
+                  onValueChange={() => toggleSwitch(item.id)}
+                  trackColor={{false: COLORS.primary, true: COLORS.secondary}}
+                      thumbColor={item.enabled ? 'green' : '#f4f3f4'} // Knob color
+                      ios_backgroundColor={COLORS.primary} // iOS fallback color
+               />
+              <TouchableOpacity
+                onPress={() => deleteUser(item.id)}
+                style={{ marginLeft: 12 }}
+              >
+                <Ionicons name="trash-bin" size={24} color="red" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      />
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: COLORS.background,
+  item: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
+  name: { fontSize: 16, fontWeight: 'bold' },
+  email: { fontSize: 14, color: '#666' },
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 24,
+    marginLeft: 20,
   },
   label: {
     fontSize: 16,
@@ -156,6 +198,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 0,
+    marginTop: 20,
+    marginLeft: 10,
+  },
+  subContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    marginTop: 5,
+    marginLeft: 5,
+  },
+  subMain: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    marginTop: 0,
+    marginLeft: 5,
   },
   addFriendButton: {
     backgroundColor: COLORS.primary,
@@ -165,16 +223,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 24,
   },
-
   addFriendButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'left',
   },
-
   addFriendButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
 });
+
