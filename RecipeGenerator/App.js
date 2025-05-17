@@ -49,8 +49,8 @@ function MainTabs() {
             return <FontAwesome5 name="user" size={size} color={color} />;
           }
         },
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.surface,
+        tabBarActiveTintColor: 'black',
+        tabBarInactiveTintColor: 'grey',
         headerShown: false,
       })}
     >
