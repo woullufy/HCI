@@ -1,47 +1,56 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, TouchableOpacity, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS } from './theme';
-
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SocialScreen({ navigation }){
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
-  const handleAddFriend = () => {
-    if (username && email) {
-      Alert.alert('Freund hinzugefügt', `Benutzername: ${username}\nE-Mail: ${email}`);
-      setUsername('');
+  const handleAddUser = async () => {
+    if (!name || !email) {
+      Alert.alert('Fehler', 'Name und E-Mail dürfen nicht leer sein.');
+      return;
+    }
+    try {
+      const existing = await AsyncStorage.getItem('users');
+      const users = existing ? JSON.parse(existing) : [];
+      const newUser = { id: Date.now().toString(), name, email, enabled: false };
+      const updatedUsers = [...users, newUser];
+      await AsyncStorage.setItem('users', JSON.stringify(updatedUsers));
+      setName('');
       setEmail('');
-    } else {
-      Alert.alert('Fehler', 'Bitte füllen Sie alle Felder aus.');
+      Alert.alert('Erfolg', 'Benutzer hinzugefügt.');
+    } catch (e) {
+      console.error('Speicherfehler:', e);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={FONTS.heading}>Freund hinzufügen</Text>
       <TextInput
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
         style={styles.input}
-        placeholder="Benutzername"
-        value={username}
-        onChangeText={setUsername}
       />
       <TextInput
-        style={styles.input}
-        placeholder="E-Mail-Adresse"
+        placeholder="E-Mail"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
-        autoCapitalize="none"
+        style={styles.input}
       />
-      <TouchableOpacity style={styles.addButton} onPress={handleAddFriend}>
-        <MaterialIcons name="person-add" size={20} color="white" />
-        <Text style={styles.addButtonText}>Hinzufügen</Text>
+      <TouchableOpacity style={styles.addButton} onPress={handleAddUser}>
+          <MaterialIcons name="person-add" size={20} color="white" />
+          <Text style={styles.addButtonText}>Hinzufügen</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
+
 
 const styles = StyleSheet.create({
   container: {
@@ -59,13 +68,13 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#cccccc',
-    borderRadius: 8,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
     marginBottom: 20,
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
   },
   addButton: {
     flexDirection: 'row',
