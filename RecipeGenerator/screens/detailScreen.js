@@ -5,7 +5,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS } from './theme'; 
 
 
-export default function RecipeDetailScreen() {
+export default function RecipeDetailScreen(navigation) {
   const route = useRoute();
   const { recipe } = route.params;
 

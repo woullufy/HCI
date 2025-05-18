@@ -16,6 +16,7 @@ import { COLORS } from './screens/theme';
 const Stack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const RecipeStack = createNativeStackNavigator();
 
 function ProfileStackScreen() {
   return (
@@ -32,6 +33,18 @@ function ProfileStackScreen() {
         options={{ headerShown: true, title: 'Freund hinzufügen' }}
       />
     </ProfileStack.Navigator>
+  );
+}
+function RecipesStackNavigator() {
+  return (
+    <RecipeStack.Navigator>
+      <RecipeStack.Screen name="RecipeSuggestions" 
+      component={RecipeSuggestionsScreen} 
+      options={{ title: 'Rezepte' }} />
+      <RecipeStack.Screen name="Details" 
+      component={DetailScreen} 
+      options={{headerShown: true, title: 'Rezeptdetails' }} />
+    </RecipeStack.Navigator>
   );
 }
 
@@ -55,7 +68,7 @@ function MainTabs() {
       })}
     >
       <Tab.Screen name="Zutaten" component={FridgeScreen} />
-      <Tab.Screen name="Rezepte" component={RecipeSuggestionsScreen} />
+      <Tab.Screen name="Rezepte" component={RecipesStackNavigator} />
       <Tab.Screen name="Profil" component={ProfileStackScreen}/>
     </Tab.Navigator>
   );
@@ -67,7 +80,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen}  />
         <Stack.Screen name="Main" component={MainTabs} />
-        <Stack.Screen name="Details" component={DetailScreen} />
+       
       </Stack.Navigator>
     </NavigationContainer>
   );
