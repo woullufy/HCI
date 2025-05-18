@@ -60,8 +60,8 @@ export default function OtherIngredientsTab() {
   
     const itemToAdd = {
       name: newItem.name.trim(),
-      quantity: newItem.amount.trim(),
-      expiryDate: newItem.expiration.trim(),
+      amount: newItem.amount.trim(),
+      expiration: newItem.expiration.trim(),
       calories: parseInt(newItem.calories, 10) || 0,
     };
   
