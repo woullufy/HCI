@@ -2,10 +2,10 @@ import React from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADIUS } from './theme'; 
+import { COLORS, FONTS, SPACING, RADIUS } from './theme';
 
 
-export default function RecipeDetailScreen(navigation) {
+export default function RecipeDetailScreen() {
   const route = useRoute();
   const { recipe } = route.params;
 

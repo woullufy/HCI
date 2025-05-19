@@ -40,7 +40,7 @@ function RecipesStackNavigator() {
     <RecipeStack.Navigator>
       <RecipeStack.Screen name="RecipeSuggestions" 
       component={RecipeSuggestionsScreen} 
-      options={{ title: 'Rezepte' }} />
+      options={{ headerShown: false}} />
       <RecipeStack.Screen name="Details" 
       component={DetailScreen} 
       options={{headerShown: true, title: 'Rezeptdetails' }} />

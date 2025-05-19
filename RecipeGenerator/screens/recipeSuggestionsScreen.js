@@ -1,24 +1,87 @@
-import React from 'react';
-import { View, Text, Button } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { COLORS, FONTS, SPACING, RADIUS } from './theme';
+import { MaterialIcons } from '@expo/vector-icons';
 
+
+// import recipeData from '../dummyData/index';
+// import recipeData from '../dummyData/output_2000';
+import recipeData from '../dummyData/output_1_temp';
 
 export default function RecipeSuggestionsScreen({ navigation }) {
-  const handleDetails = () => {
-    const dummyRecipe = {
-      id: 1,
-      title: 'Spaghetti Bolognese',
-      image: require('../assets/spaghetti.jpg'),
-      ingredients: ['Spaghetti', 'Tomato Sauce', 'Ground Beef', 'Garlic', 'Onion'],
-      instructions:
-        '1. Boil pasta.\n2. Cook ground beef with garlic and onion.\n3. Add tomato sauce.\n4. Mix with pasta and serve hot.',
-    };
-    navigation.navigate('Details', { recipe: dummyRecipe });
-  };
+  const [visibleCount, setVisibleCount] = useState(20);
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('Details', { recipe: item })}
+    >
+      <Image source={item.image} style={styles.image} />
+      <Text style={styles.title}>{item.title}</Text>
+
+    </TouchableOpacity>
+  );
+
+  const visibleData = recipeData.slice(0, 20);
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Recipe Suggestions</Text>
-      <Button title="Go to Details" onPress={handleDetails} />
-      
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.headerContainer}>
+        <MaterialIcons name="restaurant-menu" size={22} color={COLORS.primary} style={{ marginRight: 8 }} />
+        <Text style={FONTS.heading}>Rezepte</Text>
+      </View>
+
+      <View style={styles.divider} />
+
+      <FlatList
+        data={recipeData.slice(0, visibleCount)}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        onEndReached={() => setVisibleCount((prev) => prev + 20)}
+        onEndReachedThreshold={0.5}
+        contentContainerStyle={{ paddingBottom: SPACING.xl }}
+      />
+    </SafeAreaView>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.sm,
+    backgroundColor: COLORS.background,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginHorizontal: SPACING.md,
+    marginBottom: SPACING.sm,
+  },
+  card: {
+    marginBottom: SPACING.md,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
+    overflow: 'hidden',
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginHorizontal: SPACING.md,
+  },
+  image: {
+    width: '100%',
+    height: 180,
+    resizeMode: 'cover',
+  },
+  title: {
+    ...FONTS.subheading,
+    padding: SPACING.sm,
+  },
+});
