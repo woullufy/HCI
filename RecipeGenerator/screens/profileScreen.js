@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import {View,Text,Switch,FlatList,StyleSheet,TouchableOpacity,Alert,} from 'react-native';
+import { View, Text, Switch, FlatList, StyleSheet, TouchableOpacity, Alert, onValueChange } from 'react-native';
 import { COLORS, FONTS } from './theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -13,10 +13,31 @@ export default function UserListScreen() {
   const [isGlutenfree, setisGlutenfree] = useState(false);
   const navigation = useNavigation();
 
+  const updatePreference = async (key, value, setValue) => {
+    try {
+      setValue(value);
+      await AsyncStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error('Fehler beim Speichern der Präferenz:', e);
+    }
+  };
+
+
   useFocusEffect(
     useCallback(() => {
-      const loadUsers = async () => {
+      const loadPreferences = async () => {
         try {
+          const vegan = JSON.parse(await AsyncStorage.getItem('vegan')) || false;
+          const vegetarian = JSON.parse(await AsyncStorage.getItem('vegetarian')) || false;
+          const lactoseFree = JSON.parse(await AsyncStorage.getItem('lactose_free')) || false;
+          const glutenFree = JSON.parse(await AsyncStorage.getItem('gluten_free')) || false;
+
+          setisVegan(vegan);
+          setisVegetarian(vegetarian);
+          setisLactosefree(lactoseFree);
+          setisGlutenfree(glutenFree);
+
+
           const data = await AsyncStorage.getItem('users');
           if (data) {
             setUsers(JSON.parse(data));
@@ -25,7 +46,7 @@ export default function UserListScreen() {
           console.error('Ladefehler:', e);
         }
       };
-      loadUsers();
+      loadPreferences();
     }, [])
   );
 
@@ -57,7 +78,7 @@ export default function UserListScreen() {
     await AsyncStorage.setItem('users', JSON.stringify(updated));
   };
 
-  const renderPreferenceSwitch = (label, caption, value, setValue) => (
+  const renderPreferenceSwitch = (label, caption, value, onValueChange) => (
     <View style={styles.switchContainer}>
       <View style={styles.container}>
         <Text style={FONTS.subheading}>{label}</Text>
@@ -66,7 +87,8 @@ export default function UserListScreen() {
       <Switch
         trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
         thumbColor={value ? 'green' : '#f4f3f4'}
-        onValueChange={() => setValue((prev) => !prev)}
+        // onValueChange={() => setValue((prev) => !prev)}
+        onValueChange={onValueChange}
         value={value}
       />
     </View>
@@ -91,32 +113,36 @@ export default function UserListScreen() {
 
             </View>
             <View style={styles.divider} />
-               <View style={styles.subContainer}>
-               <Text style={FONTS.heading}>Meine Lebensmittelvorlieben</Text>
+            <View style={styles.subContainer}>
+              <Text style={FONTS.heading}>Meine Lebensmittelvorlieben</Text>
             </View>
             {renderPreferenceSwitch(
               'Vegetarisch',
               'Zeig mir nur vegetarische oder vegane Rezepte.',
               isVegetarian,
-              setisVegetarian
+              // setisVegetarian,
+              (value) => updatePreference('vegetarian', value, setisVegetarian)
             )}
             {renderPreferenceSwitch(
               'Vegan',
               'Zeig mir nur vegane Rezepte.',
               isVegan,
-              setisVegan
+              // setisVegan,
+              (value) => updatePreference('vegan', value, setisVegan)
             )}
             {renderPreferenceSwitch(
               'Laktosefrei',
               'Zeig mir nur laktosefreie Rezepte.',
               isLactosefree,
-              setisLactosefree
+              // setisLactosefree,
+              (value) => updatePreference('lactose_free', value, setisLactosefree)
             )}
             {renderPreferenceSwitch(
               'Glutenfrei',
               'Zeig mir nur glutenfreie Rezepte.',
               isGlutenfree,
-              setisGlutenfree
+              // setisGlutenfree,
+              (value) => updatePreference('gluten_free', value, setisGlutenfree)
             )}
 
             <View style={styles.subContainer}>
@@ -131,7 +157,7 @@ export default function UserListScreen() {
               onPress={() => navigation.navigate('Social')}
             >
               <View style={styles.addFriendButtonContent}>
-                <MaterialIcons name="add" size={22} color="white" style={{ marginRight: 8 }}/>
+                <MaterialIcons name="add" size={22} color="white" style={{ marginRight: 8 }} />
                 <Text style={styles.addFriendButtonText}>Freund hinzufügen</Text>
               </View>
             </TouchableOpacity>
@@ -144,13 +170,13 @@ export default function UserListScreen() {
               <Text style={styles.email}>{item.email}</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-               <Switch
-                  value={item.enabled}
-                  onValueChange={() => toggleSwitch(item.id)}
-                  trackColor={{false: COLORS.primary, true: COLORS.secondary}}
-                      thumbColor={item.enabled ? 'green' : '#f4f3f4'} // Knob color
-                      ios_backgroundColor={COLORS.primary} // iOS fallback color
-               />
+              <Switch
+                value={item.enabled}
+                onValueChange={() => toggleSwitch(item.id)}
+                trackColor={{ false: COLORS.primary, true: COLORS.secondary }}
+                thumbColor={item.enabled ? 'green' : '#f4f3f4'} // Knob color
+                ios_backgroundColor={COLORS.primary} // iOS fallback color
+              />
               <TouchableOpacity
                 onPress={() => deleteUser(item.id)}
                 style={{ marginLeft: 12 }}
