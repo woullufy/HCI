@@ -5,7 +5,7 @@
 export const fridgeItems = [
   {
     id: '1',
-    name: 'Milch',
+    name: 'Milk',
     amount: '1L',
     expiration: '20/05/2025',
     calories: 42,
@@ -13,7 +13,7 @@ export const fridgeItems = [
   },
   {
     id: '2',
-    name: 'Eier',
+    name: 'Eggs',
     amount: '6 Stück',
     expiration: '18/05/2025',
     calories: 155,
@@ -21,7 +21,7 @@ export const fridgeItems = [
   },
   {
     id: '3',
-    name: 'Käse',
+    name: 'Cheese',
     amount: '200g',
     expiration: '25/05/2025',
     calories: 402,
@@ -37,7 +37,7 @@ export const fridgeItems = [
   },
   {
     id: '5',
-    name: 'Schinken',
+    name: 'Ham',
     amount: '100g',
     expiration: '17/05/2025',
     calories: 145,
@@ -45,7 +45,7 @@ export const fridgeItems = [
   },
   {
     id: '6',
-    name: 'Naturjoghurt',
+    name: 'Yogurt',
     amount: '500g',
     expiration: '19/05/2025',
     calories: 60,
@@ -53,7 +53,7 @@ export const fridgeItems = [
   },
   {
     id: '7',
-    name: 'Paprika',
+    name: 'Paper',
     amount: '2 Stück',
     expiration: '21/05/2025',
     calories: 31,
@@ -61,7 +61,7 @@ export const fridgeItems = [
   },
   {
     id: '8',
-    name: 'Gurke',
+    name: 'Cucamber',
     amount: '1 Stück',
     expiration: '23/05/2025',
     calories: 12,
@@ -77,7 +77,7 @@ export const fridgeItems = [
   },
   {
     id: '18',
-    name: 'Frischer Lachs',
+    name: 'Salmon',
     amount: '200g',
     expiration: '19/05/2025',
     calories: 208,
@@ -85,7 +85,7 @@ export const fridgeItems = [
   },
   {
     id: '19',
-    name: 'Spinat (frisch)',
+    name: 'Spinach',
     amount: '300g',
     expiration: '20/05/2025',
     calories: 23,
@@ -96,7 +96,7 @@ export const fridgeItems = [
 export const manualItems = [
   {
     id: '9',
-    name: 'Tomaten',
+    name: 'Tomato',
     amount: '3 Stück',
     expiration: '22/05/2025',
     calories: 18,
@@ -104,7 +104,7 @@ export const manualItems = [
   },
   {
     id: '10',
-    name: 'Basilikum',
+    name: 'Basil',
     amount: '1 Bund',
     expiration: '25/05/2025',
     calories: 23,
@@ -112,7 +112,7 @@ export const manualItems = [
   },
   {
     id: '11',
-    name: 'Nudeln',
+    name: 'Noodles',
     amount: '500g',
     expiration: '01/01/2026',
     calories: 370,
@@ -120,7 +120,7 @@ export const manualItems = [
   },
   {
     id: '12',
-    name: 'Olivenöl',
+    name: 'olive oil',
     amount: '250ml',
     expiration: '12/03/2026',
     calories: 884,
@@ -128,7 +128,7 @@ export const manualItems = [
   },
   {
     id: '13',
-    name: 'Knoblauch',
+    name: 'Garlic',
     amount: '4 Zehen',
     expiration: '10/06/2025',
     calories: 149,
@@ -136,7 +136,7 @@ export const manualItems = [
   },
   {
     id: '14',
-    name: 'Zwiebeln',
+    name: 'Onion',
     amount: '2 Stück',
     expiration: '27/05/2025',
     calories: 40,
@@ -144,7 +144,7 @@ export const manualItems = [
   },
   {
     id: '15',
-    name: 'Reis',
+    name: 'Rice',
     amount: '1kg',
     expiration: '15/02/2026',
     calories: 365,
@@ -152,7 +152,7 @@ export const manualItems = [
   },
   {
     id: '16',
-    name: 'Thunfisch (Dose)',
+    name: 'Tuna',
     amount: '1 Dose',
     expiration: '01/08/2026',
     calories: 132,
@@ -160,7 +160,7 @@ export const manualItems = [
   },
   {
     id: '20',
-    name: 'Linsen',
+    name: 'Lenses',
     amount: '500g',
     expiration: '10/12/2026',
     calories: 352,
@@ -168,7 +168,7 @@ export const manualItems = [
   },
   {
     id: '21',
-    name: 'Kichererbsen (Dose)',
+    name: 'Chickpeas',
     amount: '1 Dose',
     expiration: '01/09/2026',
     calories: 164,
@@ -176,7 +176,7 @@ export const manualItems = [
   },
   {
     id: '22',
-    name: 'Mehl',
+    name: 'Flour',
     amount: '1kg',
     expiration: '01/11/2025',
     calories: 364,

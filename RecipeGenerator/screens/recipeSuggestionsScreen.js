@@ -4,6 +4,8 @@ import { COLORS, FONTS, SPACING, RADIUS } from './theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { fridgeItems } from '../dummyData/ingredients';
+import { manualItems } from '../dummyData/ingredients';
 
 // import recipeData from '../dummyData/index';
 // import recipeData from '../dummyData/output_2000';
@@ -13,10 +15,8 @@ export default function RecipeSuggestionsScreen({ navigation }) {
   const [visibleCount, setVisibleCount] = useState(20);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
 
-  // const [isVegan, setIsVegan] = useState(false);
-  // const [isVegetarian, setIsVegetarian] = useState(false);
-  // const [isLactosefree, setIsLactosefree] = useState(false);
-  // const [isGlutenfree, setIsGlutenfree] = useState(false);
+  const MIN_MATCH_COUNT = 2;
+  const total_items = [...fridgeItems, ...manualItems];
 
   useFocusEffect(
     useCallback(() => {
@@ -26,12 +26,21 @@ export default function RecipeSuggestionsScreen({ navigation }) {
         const lactoseFree = JSON.parse(await AsyncStorage.getItem('lactose_free')) || false;
         const glutenFree = JSON.parse(await AsyncStorage.getItem('gluten_free')) || false;
 
+        const fridgeIngredientNames = total_items.map(item =>
+          item.name.toLocaleLowerCase().trim()
+        )
+
         const filtered = recipeData.filter((recipe) => {
           if (vegan && !recipe.tags.vegan) return false;
           if (vegetarian && !recipe.tags.vegetarian) return false;
           if (lactoseFree && !recipe.tags.lactose_free) return false;
           if (glutenFree && !recipe.tags.gluten_free) return false;
-          return true;
+
+          const matchCount = recipe.sort.filter(ingredient =>
+            fridgeIngredientNames.includes(ingredient.toLowerCase())
+          ).length;
+
+          return matchCount >= MIN_MATCH_COUNT;
         });
 
         setFilteredRecipes(filtered);
