@@ -38,6 +38,7 @@ export default function RecipeDetailScreen() {
         <MaterialCommunityIcons name="silverware-fork-knife" size={20} color={COLORS.primary} /> Zubereitung
       </Text>
       <Text style={styles.text}>{recipe.instructions}</Text>
+      <View style={{ height: 10}}></View>
     </ScrollView>
   );
 }
@@ -45,7 +46,9 @@ export default function RecipeDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.background,
-    padding: 16
+    paddingLeft: 8,
+    paddingRight: 8,
+    paddingTop: 8,
   },
   image: {
     width: '100%',

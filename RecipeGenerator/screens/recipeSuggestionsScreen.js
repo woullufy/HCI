@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, TextInput } from 'react-native';
 import { COLORS, FONTS, SPACING, RADIUS } from './theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,8 +14,9 @@ import recipeData from '../dummyData/output_1_temp';
 export default function RecipeSuggestionsScreen({ navigation }) {
   const [visibleCount, setVisibleCount] = useState(20);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('')
 
-  const MIN_MATCH_COUNT = 2;
+  const MIN_MATCH_COUNT = 3;
   const total_items = [...fridgeItems, ...manualItems];
 
   useFocusEffect(
@@ -48,6 +49,11 @@ export default function RecipeSuggestionsScreen({ navigation }) {
 
       loadPreferences();
     }, [])
+
+  );
+
+  const searchedRecipes = filteredRecipes.filter(recipe =>
+    recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const renderItem = ({ item }) => (
@@ -72,8 +78,16 @@ export default function RecipeSuggestionsScreen({ navigation }) {
 
       <View style={styles.divider} />
 
+      <TextInput
+        style={styles.searchInput}
+        placeholder="🔍 Suche nach Rezepttitel..."
+        placeholderTextColor={COLORS.placeholder}
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+
       <FlatList
-        data={filteredRecipes.slice(0, visibleCount)}
+        data={searchedRecipes.slice(0, visibleCount)}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         onEndReached={() => setVisibleCount((prev) => prev + 20)}
@@ -122,5 +136,17 @@ const styles = StyleSheet.create({
   title: {
     ...FONTS.subheading,
     padding: SPACING.sm,
+  },
+  searchInput: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    fontSize: 16,
+    marginHorizontal: SPACING.md,
+    marginBottom: SPACING.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    color: COLORS.textPrimary,
   },
 });

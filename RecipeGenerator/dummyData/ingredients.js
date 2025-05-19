@@ -53,7 +53,7 @@ export const fridgeItems = [
   },
   {
     id: '7',
-    name: 'Paper',
+    name: 'Peper',
     amount: '2 Stück',
     expiration: '21/05/2025',
     calories: 31,
@@ -61,7 +61,7 @@ export const fridgeItems = [
   },
   {
     id: '8',
-    name: 'Cucamber',
+    name: 'Cucumber',
     amount: '1 Stück',
     expiration: '23/05/2025',
     calories: 12,
@@ -120,7 +120,7 @@ export const manualItems = [
   },
   {
     id: '12',
-    name: 'olive oil',
+    name: 'Olive oil',
     amount: '250ml',
     expiration: '12/03/2026',
     calories: 884,
