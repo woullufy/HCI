@@ -20,10 +20,17 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.bernhard_fruhwirth.RecipeGenerator"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1d8cea9b-7f53-4e96-950f-d3621420a5d1"
+      }
+    },
+    "owner": "bernhard_fruhwirth"
   }
 }
