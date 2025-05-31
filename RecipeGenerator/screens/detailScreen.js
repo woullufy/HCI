@@ -16,7 +16,7 @@ export default function RecipeDetailScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>{recipe.title}</Text>
         <TouchableOpacity>
-          <Ionicons name="heart-outline" size={28} color={COLORS.border} />
+          <Ionicons name="heart-outline" size={28} color= 'red' />
         </TouchableOpacity>
       </View>
 
