@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     flexDirection: 'row',
-    backgroundColor: 'green',
+    backgroundColor: COLORS.primary,
     padding: 12,
     borderRadius: RADIUS.lg,
     justifyContent: 'center',

@@ -248,6 +248,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 24,
+    marginLeft: 24,
+    marginRight: 24,
   },
   addFriendButtonContent: {
     flexDirection: 'row',
