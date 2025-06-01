@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { manualItems } from '../dummyData/ingredients';
 import { COLORS, FONTS, SPACING, RADIUS } from './theme';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -23,8 +24,34 @@ export default function OtherIngredientsTab() {
     name: '',
     amount: '',
     expiration: '',
-    calories: 0,
   });
+
+  // Lade gespeicherte Zutaten beim Mounten der Komponente
+  useEffect(() => {
+    const loadItems = async () => {
+      try {
+        const storedItems = await AsyncStorage.getItem('manualItems');
+        if (storedItems) {
+          setItems(JSON.parse(storedItems));
+        }
+      } catch (error) {
+        console.error('Fehler beim Laden der Zutaten:', error);
+      }
+    };
+    loadItems();
+  }, []);
+
+  // Speichere Zutaten bei jeder Änderung
+  useEffect(() => {
+    const saveItems = async () => {
+      try {
+        await AsyncStorage.setItem('manualItems', JSON.stringify(items));
+      } catch (error) {
+        console.error('Fehler beim Speichern der Zutaten:', error);
+      }
+    };
+    saveItems();
+  }, [items]);
 
   const handleDelete = (index) => {
     Alert.alert(
@@ -47,9 +74,22 @@ export default function OtherIngredientsTab() {
   };
 
   const handleEdit = (item, index) => {
-    setEditingItem(item);
+    setEditingItem({ ...item });
     setEditingIndex(index);
     setIsEditing(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingItem.name || !editingItem.amount || !editingItem.expiration) {
+      Alert.alert('Fehler', 'Bitte fülle alle Felder aus.');
+      return;
+    }
+    const updatedItems = [...items];
+    updatedItems[editingIndex] = editingItem;
+    setItems(updatedItems);
+    setIsEditing(false);
+    setEditingItem(null);
+    setEditingIndex(null);
   };
 
   const handleAddItem = () => {
@@ -57,47 +97,51 @@ export default function OtherIngredientsTab() {
       Alert.alert('Fehler', 'Bitte fülle alle Felder aus.');
       return;
     }
-  
+
+    // Generiere eine neue ID basierend auf der höchsten bestehenden ID
+    const maxId = items.reduce((max, item) => {
+      const idNum = parseInt(item.id, 10);
+      return idNum > max ? idNum : max;
+    }, 0);
+    const newId = (maxId + 1).toString();
+
     const itemToAdd = {
+      id: newId,
       name: newItem.name.trim(),
       amount: newItem.amount.trim(),
       expiration: newItem.expiration.trim(),
-      calories: parseInt(newItem.calories, 10) || 0,
+      source: 'manual',
     };
-  
-    setItems([...items, itemToAdd]);
-    setNewItem({ name: '', amount: '', expiration: '', calories: 0 });
+
+    // Füge die neue Zutat am Anfang der Liste hinzu
+    setItems([itemToAdd, ...items]);
+    setNewItem({ name: '', amount: '', expiration: ''});
     setIsAdding(false);
   };
 
   const renderItem = ({ item, index }) => (
     <View style={styles.item}>
-  <View style={{ flex: 1 }}>
-    <Text style={FONTS.subheading}>{item.name}</Text>
-    
-    <Text style={FONTS.body}>
-      <Text style={{ fontWeight: 'bold' }}>Menge: </Text>{item.amount}
-    </Text>
-    
-    <Text style={FONTS.body}>
-      <Text style={{ fontWeight: 'bold' }}>Ablaufdatum: </Text>{item.expiration}
-    </Text>
-    
-    <Text style={FONTS.body}>{item.calories} kcal</Text>
-  </View>
-
-  <View style={styles.actions}>
-    <TouchableOpacity onPress={() => handleEdit(item, index)}>
-      <MaterialIcons name="edit" size={24} color={COLORS.primary} />
-    </TouchableOpacity>
-    <TouchableOpacity 
-      onPress={() => handleDelete(index)}
-      style={{ marginLeft: SPACING.md }}
-    >
-      <MaterialIcons name="delete" size={24} color={COLORS.error} />
-    </TouchableOpacity>
-  </View>
-</View>
+      <View style={{ flex: 1 }}>
+        <Text style={FONTS.subheading}>{item.name}</Text>
+        <Text style={FONTS.body}>
+          <Text style={{ fontWeight: 'bold' }}>Menge: </Text>{item.amount}
+        </Text>
+        <Text style={FONTS.body}>
+          <Text style={{ fontWeight: 'bold' }}>Ablaufdatum: </Text>{item.expiration}
+        </Text>
+      </View>
+      <View style={styles.actions}>
+        <TouchableOpacity onPress={() => handleEdit(item, index)}>
+          <MaterialIcons name="edit" size={24} color={COLORS.primary} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleDelete(index)}
+          style={{ marginLeft: SPACING.md }}
+        >
+          <MaterialIcons name="delete" size={24} color={COLORS.error} />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 
   return (
@@ -106,99 +150,77 @@ export default function OtherIngredientsTab() {
         style={styles.addButton}
         onPress={() => setIsAdding(true)}
       >
-        <MaterialIcons name="add" size={28} color={'white'}  />
+        <MaterialIcons name="add" size={28} color={'white'} />
         <Text style={styles.buttonText}>Zutat hinzufügen</Text>
       </TouchableOpacity>
 
       <FlatList
         data={items}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => item.id || index.toString()}
         renderItem={renderItem}
         contentContainerStyle={{ padding: SPACING.md }}
       />
 
       {isEditing && (
         <Modal visible={isEditing} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={FONTS.subheading}>Zutat bearbeiten</Text>
-      
-            <TextInput
-              style={styles.input}
-              value={editingItem.name}
-              onChangeText={(text) =>
-                setEditingItem({ ...editingItem, name: text })
-              }
-              placeholder="Name"
-            />
-      
-            <TextInput
-              style={styles.input}
-              placeholder="Menge"
-              value={editingItem?.amount || ''}
-              onChangeText={(text) =>
-                setEditingItem({ ...editingItem, amount: text })
-              }
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Ablaufdatum (TT/MM/JJJJ)"
-              value={editingItem?.expiration || ''}
-              keyboardType="numeric"
-              onChangeText={(text) => {
-                // Nur Ziffern behalten
-                const digits = text.replace(/\D/g, '');
-
-                // Formatieren zu TT/MM/JJJJ
-                let formatted = digits;
-                if (digits.length > 2) {
-                  formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={FONTS.subheading}>Zutat bearbeiten</Text>
+              <TextInput
+                style={styles.input}
+                value={editingItem.name}
+                onChangeText={(text) =>
+                  setEditingItem({ ...editingItem, name: text })
                 }
-                if (digits.length > 4) {
-                  formatted += `/${digits.slice(4, 8)}`;
+                placeholder="Name"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Menge"
+                value={editingItem.amount}
+                onChangeText={(text) =>
+                  setEditingItem({ ...editingItem, amount: text })
                 }
-
-                setEditingItem({ ...editingItem, expiration: formatted });
-              }}
-            />
-      
-            <TextInput
-              style={styles.input}
-              value={editingItem.calories.toString()}
-              onChangeText={(text) =>
-                setEditingItem({
-                  ...editingItem,
-                  calories: parseInt(text) || "",
-                })
-              }
-              placeholder="Kalorien"
-              keyboardType="numeric"
-            />
-      
-            <View style={{ flexDirection: 'row', marginTop: SPACING.md }}>
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: COLORS.error }]}
-                onPress={() => setIsEditing(false)}
-              >
-                <Text style={styles.buttonText}>Abbrechen</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => {
-                  const updatedItems = items.map((item) =>
-                    item.id === editingItem.id ? editingItem : item
-                  );
-                  setItems(updatedItems);
-                  setIsEditing(false);
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Ablaufdatum (TT/MM/JJJJ)"
+                value={editingItem.expiration}
+                keyboardType="numeric"
+                onChangeText={(text) => {
+                  const digits = text.replace(/\D/g, '');
+                  let formatted = digits;
+                  if (digits.length > 2) {
+                    formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
+                  }
+                  if (digits.length > 4) {
+                    formatted += `/${digits.slice(4, 8)}`;
+                  }
+                  setEditingItem({ ...editingItem, expiration: formatted });
                 }}
-              >
-                <Text style={styles.buttonText}>Speichern</Text>
-              </TouchableOpacity>
+              />
+              
+              <View style={{ flexDirection: 'row', marginTop: SPACING.md }}>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: COLORS.error }]}
+                  onPress={() => {
+                    setIsEditing(false);
+                    setEditingItem(null);
+                    setEditingIndex(null);
+                  }}
+                >
+                  <Text style={styles.buttonText}>Abbrechen</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleSaveEdit}
+                >
+                  <Text style={styles.buttonText}>Speichern</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
       )}
       {isAdding && (
         <Modal visible={isAdding} animationType="slide" transparent>
@@ -224,7 +246,6 @@ export default function OtherIngredientsTab() {
                 value={newItem.expiration}
                 onChangeText={(text) => {
                   const digits = text.replace(/\D/g, '');
-
                   let formatted = digits;
                   if (digits.length > 2) {
                     formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
@@ -232,20 +253,11 @@ export default function OtherIngredientsTab() {
                   if (digits.length > 4) {
                     formatted += `/${digits.slice(4, 8)}`;
                   }
-
                   setNewItem({ ...newItem, expiration: formatted });
                 }}
               />
-              <TextInput
-                style={styles.input}
-                placeholder="Kalorien"
-                value={newItem.calories}
-                keyboardType="numeric"
-                onChangeText={(text) => setNewItem({ ...newItem, calories: text })}
-              />
-
+              
               <View style={{ flexDirection: 'row', marginTop: SPACING.md }}>
-                
                 <TouchableOpacity
                   style={[styles.button, { backgroundColor: COLORS.error }]}
                   onPress={() => setIsAdding(false)}
@@ -295,11 +307,11 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   input: {
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.sm,
-    padding: SPACING.sm,
-    marginTop: SPACING.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+    marginBottom: SPACING.sm,
+    fontSize: 16,
+    paddingVertical: 4,
     color: COLORS.textPrimary,
   },
   button: {
@@ -325,15 +337,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     alignSelf: 'flex-middle',
-    gap: 6, 
+    gap: 6,
     paddingRight: 20,
-  },
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    marginBottom: SPACING.sm,
-    fontSize: 16,
-    paddingVertical: 4,
-    color: COLORS.textPrimary,
   },
 });

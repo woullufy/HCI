@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, FlatList, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { fridgeItems } from '../dummyData/ingredients';
 import { COLORS, FONTS, SPACING, RADIUS } from './theme';
 import { Ionicons } from '@expo/vector-icons'; 
@@ -11,17 +11,15 @@ export default function IngredientsTab() {
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
-      <Text style={FONTS.subheading}>{item.name}</Text>
-
-      <Text style={FONTS.body}>
+      <Text style={FONTS.subheading} numberOfLines={1} ellipsizeMode="tail">
+        {item.name}
+      </Text>
+      <Text style={FONTS.body} numberOfLines={1} ellipsizeMode="tail">
         <Text style={{ fontWeight: 'bold' }}>Menge: </Text>{item.amount}
       </Text>
-
-      <Text style={FONTS.body}>
-        <Text style={{ fontWeight: 'bold' }}>Ablaufdatum: </Text>{item.expiration}
+      <Text style={FONTS.body} numberOfLines={1} ellipsizeMode="tail">
+        <Text style={{ fontWeight: 'bold' }}>MHD: </Text>{item.expiration}
       </Text>
-
-      <Text style={FONTS.body}>{item.calories} kcal</Text>
     </View>
   );
 
@@ -43,35 +41,43 @@ export default function IngredientsTab() {
       keyExtractor={(item, index) => index.toString()}
       renderItem={renderItem}
       ListHeaderComponent={renderHeader}
-      contentContainerStyle={{ padding: SPACING.md }}
+      contentContainerStyle={{ padding: SPACING.xs }}
+      numColumns={2}
+      columnWrapperStyle={styles.columnWrapper}
+      key="two-column"
     />
   );
 }
 
+const { width } = Dimensions.get('window');
+const itemWidth = (width - SPACING.xs * 12) / 2; //für gleichmäßigen Abstand
+
 const styles = StyleSheet.create({
   item: {
     backgroundColor: COLORS.surface,
-    padding: SPACING.md,
+    padding: SPACING.sm,
     borderRadius: RADIUS.md,
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.sm, // Reduziert von SPACING.sm für weniger Zeilenabstand
+    marginRight: SPACING.sm, // Abstand zwischen Spalten
     borderWidth: 1,
     borderColor: COLORS.border,
+    width: itemWidth,
+    height: 80,
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.md, 
   },
   connectionBox: {
     borderWidth: 1,
-    borderColor: '#A4C2A5', 
+    borderColor: '#A4C2A5',
     backgroundColor: '#DEEBDA',
     borderRadius: RADIUS.sm,
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
   },
-
   connectionText: {
     fontWeight: '500',
     ...FONTS.subheading,
@@ -83,5 +89,9 @@ const styles = StyleSheet.create({
   },
   syncText: {
     ...FONTS.body,
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+    marginRight: -SPACING.xs, // Kompensiert marginRight der letzten Karte
   },
 });
