@@ -12,13 +12,23 @@ export default function RecipeDetailScreen() {
   return (
     <ScrollView style={styles.container}>
       <Image source={recipe.image} style={styles.image} />
-
+      <View style={styles.nutritionContainer}>
+        <Text style={styles.nutritionTitle}>Nährwerte:</Text>
+        <View style={styles.nutritionRow}>
+          <Text style={styles.nutritionItem}>🔥 540 kcal</Text>
+          <Text style={styles.nutritionItem}>💪 25g Protein</Text>
+          <Text style={styles.nutritionItem}>🍝 60g Kohlenhydrate</Text>
+          <Text style={styles.nutritionItem}>🥑 20g Fett</Text>
+        </View>
+      </View>
       <View style={styles.header}>
         <Text style={styles.title}>{recipe.title}</Text>
         <TouchableOpacity>
           <Ionicons name="heart-outline" size={28} color= 'red' />
         </TouchableOpacity>
       </View>
+
+      
 
       {recipe.cookTime && (
         <View style={styles.infoRow}>
@@ -89,5 +99,28 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 16,
     color: COLORS.text
-  }
+  },
+  nutritionContainer: {
+  backgroundColor: COLORS.background,
+  borderRadius: RADIUS.md,
+  padding: SPACING.sm,
+  marginBottom: SPACING.md
+},
+nutritionTitle: {
+  ...FONTS.subheading,
+  marginBottom: 4,
+  color: COLORS.textPrimary
+},
+nutritionRow: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between'
+},
+nutritionItem: {
+  ...FONTS.caption,
+  marginVertical: 2,
+  width: '48%',
+  color: COLORS.textSecondary
+}
+
 });
