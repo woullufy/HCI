@@ -17,7 +17,7 @@ Externe Libraries und Frameworks:
 none
 
 Dauer der Entwicklung:
-30h
+42h
 
 Weitere Anmerkungen:
 none
